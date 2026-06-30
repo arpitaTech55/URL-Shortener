@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>URL Shortener</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 80px auto;
+      text-align: center;
+    }
+    input {
+      width: 300px;
+      padding: 10px;
+      font-size: 14px;
+    }
+    button {
+      padding: 10px 16px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>URL Shortener</h1>
+  <input type="text" id="urlInput" placeholder="Paste your long URL here">
+  <button onclick="shortenUrl()">Shorten</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function shortenUrl() {
+      const urlInput = document.getElementById('urlInput').value;
+      const resultDiv = document.getElementById('result');
+
+      if (!urlInput) {
+        resultDiv.textContent = 'Please enter a URL';
+        return;
+      }
+
+      const response = await fetch('/api/shorten', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ originalUrl: urlInput })
+      });
+
+      const data = await response.json();
+
+      if (data.shortUrl) {
+        resultDiv.innerHTML = `Your short URL: <a href="${data.shortUrl}">${data.shortUrl}</a>`;
+      } else {
+        resultDiv.textContent = data.error;
+      }
+    }
+  </script>
+
+</body>
+</html>
